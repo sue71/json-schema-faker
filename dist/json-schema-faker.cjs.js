@@ -913,12 +913,12 @@ function arrayType(value, path, resolve, traverseCallback) {
 
   if (optionAPI('maxItems')) {
     // Don't allow user to set max items above our maximum
-    if (maxItems && maxItems > optionAPI('maxItems')) {
+    if (!maxItems || maxItems > optionAPI('maxItems')) {
       maxItems = optionAPI('maxItems');
     } // Don't allow user to set min items above our maximum
 
 
-    if (minItems && minItems > optionAPI('maxItems')) {
+    if (minItems && minItems > maxItems) {
       minItems = maxItems;
     }
   }
@@ -928,7 +928,7 @@ function arrayType(value, path, resolve, traverseCallback) {
   var length = random.number(minItems, maxItems, 1, 5);
 
   if (optionalsProbability !== false) {
-    length = fixedProbabilities ? Math.round(maxItems * optionalsProbability) : random.number(minItems, maxItems * optionalsProbability);
+    length = fixedProbabilities ? Math.round(maxItems * optionalsProbability) : random.number(minItems, maxItems) * optionalsProbability;
   } // TODO below looks bad. Should additionalItems be copied as-is?
 
 
@@ -1563,7 +1563,7 @@ function resolve(obj, data, values, property) {
 
 function run(refs, schema, container) {
   try {
-    var result = traverse(schema, [], function reduce(sub, maxReduceDepth, parentSchemaPath) {
+    var result = traverse(utils.merge({}, schema), [], function reduce(sub, maxReduceDepth, parentSchemaPath) {
       if (typeof maxReduceDepth === 'undefined') {
         maxReduceDepth = random.number(1, 3);
       }
