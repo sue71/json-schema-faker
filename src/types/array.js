@@ -65,12 +65,12 @@ function arrayType(value, path, resolve, traverseCallback) {
 
   if (optionAPI('maxItems')) {
     // Don't allow user to set max items above our maximum
-    if (maxItems && maxItems > optionAPI('maxItems')) {
+    if (!maxItems || maxItems > optionAPI('maxItems')) {
       maxItems = optionAPI('maxItems');
     }
 
     // Don't allow user to set min items above our maximum
-    if (minItems && minItems > optionAPI('maxItems')) {
+    if (minItems && minItems > maxItems) {
       minItems = maxItems;
     }
   }
